@@ -19,12 +19,27 @@ appearing as the story progresses.
 - **Motion with purpose.** Every animation either reveals the product or
   moves the story forward. No decorative motion.
 
-## Initial tokens
+## Tokens
 
-- Background: near-black (`#0a0a0a`) — dark theme is the target.
-- Foreground: off-white (`#ededed`).
-- Fonts: Geist Sans (headlines/body), Geist Mono (labels) — already wired by
-  the Next.js template.
+- Background: near-black (`#0a0a0a`), used by both the page and the WebGL
+  clear color so the canvas edge is invisible.
+- Foreground: off-white (`#ededed`); secondary text uses opacity
+  (`/50`, `/40`).
+- Dark-only: no light theme (the DOM always sits on the dark stage).
+- Fonts: Geist Sans (headlines/body), Geist Mono (labels).
+
+## Hero composition (M02)
+
+- Watch centered in the viewport, ~55% of viewport height on desktop, in a
+  slight three-quarter pose (tilted up ~9°, turned ~20°) so bezel depth reads.
+- Corner-anchored DOM: wordmark `NOVA` top-left (mono, wide tracking);
+  label `NOVA Chronograph` + headline `THE FUTURE OF TIME.` bottom-left
+  (uppercase, tight, large); attribution bottom-right, small and dim.
+- Lighting: studio look — soft key from upper right, dim fill left, two rim
+  strips behind for bezel edge highlights, top strip.
+- Interaction: the watch turns gently toward the pointer (max ~7°).
+- The asset's default materials are kept (gold bezel, black band).
+- Narrow viewports: watch scales down to fit; text stacks below.
 
 ## Planned sections (draft)
 

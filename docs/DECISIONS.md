@@ -30,7 +30,8 @@ no animation library besides GSAP, no UI kit. (M01)
 ## D006 — Fixed WebGL canvas behind scrolling DOM
 The canvas is a fixed full-viewport layer; DOM sections scroll over it and
 drive a GSAP ScrollTrigger timeline that mutates three.js objects via refs.
-Planned, to be confirmed in M02/M03. See ARCHITECTURE.md.
+Fixed canvas implemented in M02; scroll part to be confirmed in M03. See
+ARCHITECTURE.md.
 
 ## D007 — No R3F rendering in M01
 M01 only installs the 3D packages; the placeholder page is plain DOM. A real
@@ -65,3 +66,35 @@ single mesh), AntiqueCamera (CC0, 17.5 MB, antique rather than premium).
 Limitations: 7.4 MB (heavy-ish for web, uncompressed textures); visible
 trademark logos; ships an animation clip (`Anim_0`) and 29 materials incl.
 variants. Credit must be shown on the site (M05). (M02)
+
+## D009 — Studio lighting from Lightformers, not an HDRI preset
+`<Environment>` with drei `<Lightformer>` panels, rendered once
+(`frames={1}`), plus a low ambient and one directional key light. drei's
+`preset` environments download HDRIs from a third-party CDN at runtime;
+Lightformers are local, controllable like a real studio, and give the metal
+and glass clean reflections. (M02)
+
+## D010 — Normalize the model in code; GLB stays untouched
+`WatchModel` computes the bounding box once (`useMemo`) and applies centering
+and scale (height = 2 world units) on wrapper groups. The cached GLTF scene's
+own transform is never mutated, so remounts/HMR stay correct.
+`useGLTF(url, false)` disables Draco: the asset isn't Draco-compressed, and
+this avoids attaching a decoder that loads from a CDN. (M02)
+
+## D011 — Pointer interaction rotates the model, not the camera
+`PointerRig` wraps the model and damps its rotation toward the pointer
+(±0.12 rad) in `useFrame`. The camera is left untouched so M03 can own it for
+scroll choreography without conflicts. (M02)
+
+## D012 — Responsive fit scales the model, not the camera
+`Scene` scales the model down when the visible world width at the origin is
+below 3.2 units. Keeps the camera free for M03. (M02)
+
+## D013 — DOM overlay is pointer-events-none; dark-only theme
+The DOM layer passes pointer moves through to the canvas, which is how R3F
+receives them; links opt back in. The template's light theme was removed:
+light-mode foreground would be invisible on the dark stage. (M02)
+
+## D014 — Asset animation and material variants unused in M02
+The GLB's `Anim_0` (seconds hand) and its four material variants are not
+used. Default materials render as authored. Possible M04 additions. (M02)

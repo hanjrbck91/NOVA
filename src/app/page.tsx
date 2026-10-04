@@ -1,29 +1,32 @@
-import { StatusList } from "@/components/ui/StatusList";
+import { Experience } from "@/components/scene/Experience";
+import { Attribution } from "@/components/ui/Attribution";
 
-// M01 placeholder: proves the App Router, TypeScript, Tailwind and the
-// component structure work. The 3D scene arrives in M02.
 export default function Home() {
   return (
-    <main className="flex flex-1 flex-col justify-center gap-10 px-6 py-24 sm:px-16">
-      <div className="flex flex-col gap-3">
-        <p className="font-mono text-xs uppercase tracking-[0.3em] text-foreground/50">
-          Milestone 01 — Foundation
-        </p>
-        <h1 className="text-5xl font-semibold tracking-tight">NOVA</h1>
-        <p className="max-w-md text-foreground/70">
-          Development environment is running. The 3D scene will be added in
-          M02.
-        </p>
-      </div>
-      <StatusList
-        items={[
-          { label: "framework", value: "Next.js (App Router)" },
-          { label: "language", value: "TypeScript" },
-          { label: "styling", value: "Tailwind CSS" },
-          { label: "3d", value: "three · @react-three/fiber · drei (installed)" },
-          { label: "animation", value: "gsap · ScrollTrigger (installed)" },
-        ]}
-      />
-    </main>
+    <>
+      <Experience />
+      {/* DOM layer above the canvas. pointer-events-none lets pointer moves
+          reach the canvas; links opt back in. */}
+      <main className="pointer-events-none relative flex h-dvh flex-col justify-between p-6 sm:p-10">
+        <header className="font-mono text-xs uppercase tracking-[0.4em]">
+          NOVA
+        </header>
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex flex-col gap-3">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-foreground/50">
+              NOVA Chronograph
+            </p>
+            <h1 className="text-4xl font-semibold uppercase tracking-tight sm:text-6xl">
+              The future
+              <br />
+              of time.
+            </h1>
+          </div>
+          <div className="pointer-events-auto">
+            <Attribution />
+          </div>
+        </div>
+      </main>
+    </>
   );
 }
