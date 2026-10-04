@@ -17,9 +17,24 @@ export const CHAPTER = {
 
 export const STORY_LENGTH = 3;
 
-// Height of the scroll container. 400vh = 1 viewport visible + 3 viewports
-// of scroll distance, i.e. one viewport of scrolling per chapter.
-export const STORY_HEIGHT_CLASS = "h-[400vh]";
+// Height of the scroll container. 550vh = 1 viewport visible + 4.5 viewports
+// of scroll distance, i.e. 1.5 viewports of scrolling per chapter.
+export const STORY_HEIGHT_CLASS = "h-[550vh]";
+
+// ---------------------------------------------------------------------------
+// Motion pipeline (M04)
+// ---------------------------------------------------------------------------
+// Exactly one layer smooths scroll: Lenis (wheel) or the OS (touch momentum).
+// The timeline then follows the scroll position directly (scrub: true), so
+// the 3D never lags behind the page.
+export const SCRUB: true | number = true;
+
+export const SMOOTH_SCROLL = {
+  // Fraction of the remaining distance covered per frame (at 60 fps).
+  lerp: 0.1,
+  // < 1 shortens each wheel step so a flick doesn't race through chapters.
+  wheelMultiplier: 0.8,
+};
 
 // Below this width the narrow camera variants are used.
 export const NARROW_QUERY = "(max-width: 767px)";

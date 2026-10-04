@@ -17,7 +17,8 @@ Tailwind v4 is what the current template ships (`@tailwindcss/postcss`, no
 `tailwind.config`). Used for DOM layout/typography only, never for 3D. (M01)
 
 ## D004 — Minimal dependency set
-Runtime: `three`, `@react-three/fiber`, `@react-three/drei`, `gsap`.
+Runtime: `three`, `@react-three/fiber`, `@react-three/drei`, `gsap`
+(+ `lenis` from M04, see D023).
 Dev: `@types/three` (required for TypeScript types on three.js).
 ScrollTrigger ships inside `gsap`, so no extra package. No state library,
 no animation library besides GSAP, no UI kit. (M01)
@@ -100,6 +101,7 @@ The GLB's `Anim_0` (seconds hand) and its four material variants are not
 used. Default materials render as authored. Possible M04 additions. (M02)
 
 ## D015 — Native scroll + CSS sticky stage; no GSAP pin, no Lenis
+*Lenis part superseded by D023 (M04); sticky stage still applies.*
 A 400vh container with a `sticky top-0 h-svh` stage holding canvas and DOM.
 ScrollTrigger only reads progress. Sticky avoids pin-spacer DOM changes;
 `scrub: 1` provides smoothing, and native scroll showed no problem that would
@@ -150,3 +152,25 @@ bounce card below (`[0, -5, 1]`, 12x12, 0.5) for down/lower-left-facing
 surfaces (lower bezel, lugs, band underside). Large areas = soft gradients,
 not second hot spots. Key light and key panel unchanged; no camera/timeline
 changes. (M03)
+
+## D023 — Lenis for wheel smoothing (supersedes "no Lenis" in D015)
+User review found M03 scrolling too fast and the 3D floaty. Measurement
+showed double smoothing (Chrome's per-notch wheel animation + `scrub: 1`
+catch-up, ~1 s tail). Lenis (`lerp 0.1`, `wheelMultiplier 0.8`,
+`syncTouch: false`, `respectReducedMotion: true`) becomes the single
+smoothing layer for wheel input. Driven by `gsap.ticker` with
+`ScrollTrigger.update` on scroll — one loop, no competing rAF. Touch stays
+native. (M04)
+
+## D024 — scrub: true (timeline follows scroll exactly)
+With smoothing done before ScrollTrigger, the timeline no longer adds its own
+lag (`SCRUB = true` in storyConfig). Removes the ~1 s glide after input
+stops. (M04)
+
+## D025 — 150vh of scroll per chapter
+Story container 400vh → 550vh: ~17 wheel notches per chapter instead of ~9.
+Timeline unchanged (still 3 chapter units). (M04)
+
+## D026 — Pointer rig: smaller and snappier
+`STRENGTH` 0.12 → 0.06 rad, `SMOOTHING` λ 3 → 6. The pointer stays a subtle,
+precise secondary response; scroll owns the major pose. (M04)

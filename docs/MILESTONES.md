@@ -5,7 +5,7 @@
 | M01 | Foundation                   | Done        | [M01](milestones/M01-foundation.md) |
 | M02 | 3D Scene                     | Done        | [M02](milestones/M02-3d-scene.md)   |
 | M03 | Scroll-driven Animation      | Done        | [M03](milestones/M03-scroll-driven-animation.md) |
-| M04 | Interaction & Polish         | Not started | —                                   |
+| M04 | Interaction & Polish         | In progress (motion pass done) | [M04 motion](milestones/M04-motion-quality.md) |
 | M05 | Final Prototype / Deployment | Not started | —                                   |
 
 ## M01 — Foundation
@@ -21,8 +21,9 @@ Three chapters (Hero, Precision, Final) on a sticky stage; one GSAP
 ScrollTrigger timeline drives camera, watch rotation and DOM text.
 
 ## M04 — Interaction & Polish
-Pointer interaction, typography and timing refinement, loading state,
-responsive and performance checks.
+Part 1 (done, in review): motion quality pass — Lenis wheel smoothing,
+`scrub: true`, longer chapters, calmer pointer. Part 2 (not started): loading
+state, small-desktop layout, CTA, typography/timing polish.
 
 ## M05 — Final Prototype / Deployment
 Final review, production build, deployment, and a short retrospective of the

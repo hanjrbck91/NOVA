@@ -5,6 +5,7 @@ import {
   CAMERA_STATES,
   CAMERA_STATES_NARROW,
   CHAPTER,
+  SCRUB,
   STORY_LENGTH,
   WATCH_STATES,
   type Vec3,
@@ -50,16 +51,16 @@ export function createStoryTimeline({
   gsap.set([text.precision, text.final], { autoAlpha: 0, y: 40 });
 
   // ScrollTrigger: progress 0 when the container's top hits the viewport
-  // top, 1 when its bottom hits the viewport bottom. scrub: 1 makes the
-  // timeline catch up to the scroll position over ~1s (smoothing without a
-  // smooth-scroll library).
+  // top, 1 when its bottom hits the viewport bottom. Smoothing happens before
+  // this (Lenis / touch momentum, see smoothScroll.ts), so the timeline
+  // follows scroll directly instead of adding its own catch-up lag.
   const tl = gsap.timeline({
     defaults: { ease: "power1.inOut" },
     scrollTrigger: {
       trigger,
       start: "top top",
       end: "bottom bottom",
-      scrub: 1,
+      scrub: SCRUB,
     },
   });
 

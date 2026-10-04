@@ -11,12 +11,13 @@
 | React ↔ three    | @react-three/fiber                          |
 | 3D helpers       | @react-three/drei (model loading, env, etc) |
 | Animation        | gsap + ScrollTrigger (ships inside `gsap`)  |
+| Smooth scroll    | lenis (wheel only, M04)                     |
 
 ## Component tree (as of M03)
 
 ```
 app/page.tsx                      Server Component
-└── <Story>                       "use client" — tall scroll container (400vh), ScrollTrigger trigger
+└── <Story>                       "use client" — tall scroll container (550vh), ScrollTrigger trigger; starts Lenis
     └── sticky stage (h-svh)      pinned by CSS while the container scrolls
         ├── <Experience>          WebGL layer (absolute, fills the stage)
         │   └── <Canvas>          camera + renderer + color management
@@ -39,7 +40,8 @@ app/page.tsx                      Server Component
 | `WatchModel` | Loading and normalizing the GLB only | `components/scene/WatchModel.tsx` |
 | `ScrollDirector` | Bridge: live camera/watch → timeline; `lookAt` per frame | `components/scene/ScrollDirector.tsx` |
 | `createStoryTimeline` | ScrollTrigger + the one GSAP timeline | `animation/createStoryTimeline.ts` |
-| `storyConfig` | All chapter ranges, camera/watch states, breakpoints | `animation/storyConfig.ts` |
+| `storyConfig` | All chapter ranges, camera/watch states, breakpoints, motion tuning | `animation/storyConfig.ts` |
+| `startSmoothScroll` | Lenis + GSAP ticker / ScrollTrigger sync + cleanup | `animation/smoothScroll.ts` |
 | `StoryOverlay` | Chapter text, scroll indicator | `components/ui/StoryOverlay.tsx` |
 | `Attribution` | Asset credit | `components/ui/Attribution.tsx` |
 
@@ -100,16 +102,20 @@ public/
 └── models/              3D assets (.glb), served statically
 ```
 
-## Scroll data flow (M03)
+## Scroll data flow (M04)
 
-1. The user scrolls natively; the 400vh `Story` container moves, the sticky
-   stage stays put.
-2. One ScrollTrigger (`top top` → `bottom bottom`, `scrub: 1`) maps the
-   container's scroll progress to the timeline's progress.
+1. Wheel input is smoothed by Lenis (driven by `gsap.ticker`); touch, keys
+   and scrollbar scroll natively. Either way the window scrolls; the 550vh
+   `Story` container moves, the sticky stage stays put.
+2. Lenis calls `ScrollTrigger.update` on every scroll frame. One
+   ScrollTrigger (`top top` → `bottom bottom`, `scrub: true`) maps scroll
+   progress directly to timeline progress — no extra lag.
 3. The timeline tweens `camera.position`, a `cameraTarget` vector, the watch
    group's `rotation`, and DOM chapter opacity/translate — directly, no React
    state.
 4. Each frame, `ScrollDirector` calls `camera.lookAt(cameraTarget)`;
-   `PointerRig` damps its rotation; R3F renders.
+   `PointerRig` damps its (small) rotation; R3F renders.
 
-Details: [M03 doc](milestones/M03-scroll-driven-animation.md).
+Exactly one smoothing layer per input. Details:
+[M03](milestones/M03-scroll-driven-animation.md),
+[M04 motion pass](milestones/M04-motion-quality.md).
