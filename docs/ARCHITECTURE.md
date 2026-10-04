@@ -12,53 +12,56 @@
 | 3D helpers       | @react-three/drei (model loading, env, etc) |
 | Animation        | gsap + ScrollTrigger (ships inside `gsap`)  |
 
-## Component tree (as of M02)
+## Component tree (as of M03)
 
 ```
-app/page.tsx                    Server Component
-├── <Experience>                "use client" — fixed full-viewport layer
-│   └── <Canvas>                R3F: camera, renderer, color management
-│       ├── <color background>
-│       └── <Suspense>
-│           └── <Scene>         composition: responsive fit + hero pose
-│               ├── <StudioLighting>   ambient + key light + Environment(Lightformers)
-│               └── <PointerRig>       pointer-driven rotation (interaction)
-│                   └── <group fit/hero pose>
-│                       └── <WatchModel>   GLB load + normalization
-└── <main>                      DOM layer (pointer-events-none)
-    ├── header / headline
-    └── <Attribution>           CC BY credit (links are pointer-events-auto)
+app/page.tsx                      Server Component
+└── <Story>                       "use client" — tall scroll container (400vh), ScrollTrigger trigger
+    └── sticky stage (h-svh)      pinned by CSS while the container scrolls
+        ├── <Experience>          WebGL layer (absolute, fills the stage)
+        │   └── <Canvas>          camera + renderer + color management
+        │       ├── <color background>
+        │       └── <Suspense>
+        │           ├── <Scene>          lighting + rig + watch groups, responsive fit
+        │           │   ├── <StudioLighting>
+        │           │   └── <PointerRig> → watch scroll group → fit group → <WatchModel>
+        │           └── <ScrollDirector> builds the scroll timeline, aims the camera
+        └── <StoryOverlay>        DOM chapters (pointer-events-none), attribution
 ```
 
-Responsibilities are separated:
-
-| Component        | Owns                                           | File |
-| ---------------- | ---------------------------------------------- | ---- |
-| `Experience`     | Canvas + camera + renderer settings            | `components/scene/Experience.tsx` |
-| `Scene`          | What is in the scene, composition, fit         | `components/scene/Scene.tsx` |
-| `StudioLighting` | Lights and environment reflections             | `components/scene/StudioLighting.tsx` |
-| `PointerRig`     | Pointer interaction only                       | `components/scene/PointerRig.tsx` |
-| `WatchModel`     | Loading and normalizing the GLB only           | `components/scene/WatchModel.tsx` |
-| `Attribution`    | Asset credit                                   | `components/ui/Attribution.tsx` |
+| Component / module | Owns | File |
+| --- | --- | --- |
+| `Story` | Scroll length, sticky stage, client boundary | `components/Story.tsx` |
+| `Experience` | Canvas, camera, renderer settings | `components/scene/Experience.tsx` |
+| `Scene` | What is in the scene, transform layers, fit | `components/scene/Scene.tsx` |
+| `StudioLighting` | Lights and environment reflections | `components/scene/StudioLighting.tsx` |
+| `PointerRig` | Pointer interaction only | `components/scene/PointerRig.tsx` |
+| `WatchModel` | Loading and normalizing the GLB only | `components/scene/WatchModel.tsx` |
+| `ScrollDirector` | Bridge: live camera/watch → timeline; `lookAt` per frame | `components/scene/ScrollDirector.tsx` |
+| `createStoryTimeline` | ScrollTrigger + the one GSAP timeline | `animation/createStoryTimeline.ts` |
+| `storyConfig` | All chapter ranges, camera/watch states, breakpoints | `animation/storyConfig.ts` |
+| `StoryOverlay` | Chapter text, scroll indicator | `components/ui/StoryOverlay.tsx` |
+| `Attribution` | Asset credit | `components/ui/Attribution.tsx` |
 
 ## Transform hierarchy (who moves what)
 
 ```
-camera                      ← reserved for M03 scroll choreography
+camera (+ cameraTarget)     ← scroll timeline (position) + lookAt each frame
 PointerRig group            ← pointer rotation (small, damped)
-  fit/hero group            ← responsive scale + static hero angle
-    WatchModel scale group  ← normalize height to 2 world units
-      offset group          ← center bounding box on origin
-        GLTF scene          ← never mutated
+  watch scroll group        ← scroll timeline (rotation)
+    fit group               ← responsive scale
+      WatchModel scale group  ← normalize height to 2 world units
+        offset group          ← center bounding box on origin
+          GLTF scene          ← never mutated
 ```
 
-Each concern writes to its own transform, so later layers (scroll timeline in
-M03) can animate the camera or add another group without fighting existing
-code.
+Each concern writes to its own transform, so the pointer interaction and the
+scroll timeline add together instead of fighting.
 
 ## Layering
 
-- The **WebGL canvas is fixed** (`fixed inset-0`) behind the DOM.
+- The **WebGL canvas fills a sticky stage** behind the DOM; the stage stays
+  pinned while the 400vh story container scrolls.
 - The DOM `<main>` is `relative` and `pointer-events-none`, so pointer moves
   pass through to the canvas (R3F tracks `state.pointer` on the canvas).
   Interactive DOM elements opt back in with `pointer-events-auto`.
@@ -66,7 +69,8 @@ code.
 
 ## Rendering defaults
 
-- Camera: perspective, fov 30°, position `[0, 0, 7]`, looking at origin.
+- Camera: perspective, fov 30°, starts at `CAMERA_STATES.hero`; afterwards
+  owned by the scroll timeline.
 - `dpr={[1, 2]}`, antialias on.
 - Color management: R3F defaults — sRGB output color space, ACES Filmic tone
   mapping. Background `#0a0a0a` via `<color attach="background">`.
@@ -91,15 +95,21 @@ src/
 ├── components/
 │   ├── ui/              DOM / typography components
 │   └── scene/           R3F components (Canvas, model, lights, interaction)
-└── animation/           GSAP timelines and ScrollTrigger setup (M03, empty)
+└── animation/           story config + GSAP timeline / ScrollTrigger setup
 public/
 └── models/              3D assets (.glb), served statically
 ```
 
-## Data flow for scroll (planned, M03)
+## Scroll data flow (M03)
 
-1. DOM sections render and define scroll length.
-2. ScrollTrigger reports progress for those sections.
-3. A GSAP timeline tweens the camera (and/or a dedicated group) via refs —
-   not through React state.
-4. R3F renders the scene each frame.
+1. The user scrolls natively; the 400vh `Story` container moves, the sticky
+   stage stays put.
+2. One ScrollTrigger (`top top` → `bottom bottom`, `scrub: 1`) maps the
+   container's scroll progress to the timeline's progress.
+3. The timeline tweens `camera.position`, a `cameraTarget` vector, the watch
+   group's `rotation`, and DOM chapter opacity/translate — directly, no React
+   state.
+4. Each frame, `ScrollDirector` calls `camera.lookAt(cameraTarget)`;
+   `PointerRig` damps its rotation; R3F renders.
+
+Details: [M03 doc](milestones/M03-scroll-driven-animation.md).

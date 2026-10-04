@@ -35,15 +35,27 @@ appearing as the story progresses.
 - Corner-anchored DOM: wordmark `NOVA` top-left (mono, wide tracking);
   label `NOVA Chronograph` + headline `THE FUTURE OF TIME.` bottom-left
   (uppercase, tight, large); attribution bottom-right, small and dim.
-- Lighting: studio look — soft key from upper right, dim fill left, two rim
-  strips behind for bezel edge highlights, top strip.
+- Lighting: studio look — soft key from upper right (the only source of hard
+  metallic highlights), large low soft fill front-left (cool, ~1/3 key),
+  dim back rim plus two rim strips behind for edge separation, dim bounce
+  card below, top strip.
+  Contrast stays high; fill only keeps dark parts from merging with the
+  background (D022).
 - Interaction: the watch turns gently toward the pointer (max ~7°).
 - The asset's default materials are kept (gold bezel, black band).
 - Narrow viewports: watch scales down to fit; text stacks below.
 
-## Planned sections (draft)
+## Chapters (M03)
 
-1. Hero — product reveal, product name.
-2. Detail — camera moves close to a feature.
-3. Rotation — product turns to show form.
-4. Closing — product settles, final call to action.
+| # | Chapter | Shot | DOM |
+| --- | --- | --- | --- |
+| 1 | Hero | M02 framing, slow dolly-in | `NOVA Chronograph` / `THE FUTURE OF TIME.` bottom-left; `Scroll ↓` indicator; text drifts up and fades |
+| 2 | Precision | Camera orbits up-left, closer; watch turns the other way, revealing case side, buttons, band | `02 — Craft` / `PRECISION IN MOTION.` right-middle |
+| 3 | Final | Camera pulls back; watch settles near-frontal, right of center | `EXPERIENCE NOVA.` + `DISCOVER →` left-middle |
+
+Motion: one chapter per viewport of scroll, `power1.inOut` easing, `scrub: 1`
+smoothing. Text only fades and moves 40px vertically. On narrow screens all
+text sits bottom-left and the watch stays centered above it.
+
+The earlier 4-section draft (separate "detail" and "rotation" shots) was
+condensed into 3 chapters: Precision covers both.

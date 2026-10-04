@@ -1,25 +1,30 @@
 import { useThree } from "@react-three/fiber";
+import type { RefObject } from "react";
+import type { Group } from "three";
+import { HERO_VISIBLE_HEIGHT, MIN_VISIBLE_WIDTH } from "@/animation/storyConfig";
 import { PointerRig } from "./PointerRig";
 import { StudioLighting } from "./StudioLighting";
 import { WatchModel } from "./WatchModel";
 
-// Hero pose: slight three-quarter angle so the bezel depth reads.
-const HERO_ROTATION: [number, number, number] = [0.15, -0.35, 0];
-
-// Below this visible world width (at the origin) the model shrinks so it
-// isn't cropped on narrow viewports. Leaves the camera free for M03.
-const MIN_VISIBLE_WIDTH = 3.2;
-
-export function Scene() {
-  const viewportWidth = useThree((state) => state.viewport.width);
-  const fit = Math.min(1, viewportWidth / MIN_VISIBLE_WIDTH);
+// Transform layers, outermost first:
+//   PointerRig  — pointer interaction
+//   watchRef    — scroll timeline (rotation), owned by createStoryTimeline
+//   fit group   — responsive scale
+//   WatchModel  — normalization
+export function Scene({ watchRef }: { watchRef: RefObject<Group | null> }) {
+  const aspect = useThree((state) => state.size.width / state.size.height);
+  // Uses the hero distance (not the live camera) so the fit doesn't change
+  // when the camera moves during the story.
+  const fit = Math.min(1, (HERO_VISIBLE_HEIGHT * aspect) / MIN_VISIBLE_WIDTH);
 
   return (
     <>
       <StudioLighting />
       <PointerRig>
-        <group scale={fit} rotation={HERO_ROTATION}>
-          <WatchModel />
+        <group ref={watchRef}>
+          <group scale={fit}>
+            <WatchModel />
+          </group>
         </group>
       </PointerRig>
     </>

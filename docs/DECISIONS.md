@@ -30,8 +30,8 @@ no animation library besides GSAP, no UI kit. (M01)
 ## D006 — Fixed WebGL canvas behind scrolling DOM
 The canvas is a fixed full-viewport layer; DOM sections scroll over it and
 drive a GSAP ScrollTrigger timeline that mutates three.js objects via refs.
-Fixed canvas implemented in M02; scroll part to be confirmed in M03. See
-ARCHITECTURE.md.
+Fixed canvas implemented in M02; in M03 refined to a sticky stage inside the
+scroll container (D015). See ARCHITECTURE.md.
 
 ## D007 — No R3F rendering in M01
 M01 only installs the 3D packages; the placeholder page is plain DOM. A real
@@ -98,3 +98,55 @@ light-mode foreground would be invisible on the dark stage. (M02)
 ## D014 — Asset animation and material variants unused in M02
 The GLB's `Anim_0` (seconds hand) and its four material variants are not
 used. Default materials render as authored. Possible M04 additions. (M02)
+
+## D015 — Native scroll + CSS sticky stage; no GSAP pin, no Lenis
+A 400vh container with a `sticky top-0 h-svh` stage holding canvas and DOM.
+ScrollTrigger only reads progress. Sticky avoids pin-spacer DOM changes;
+`scrub: 1` provides smoothing, and native scroll showed no problem that would
+justify a smooth-scroll dependency. (M03)
+
+## D016 — One timeline, one ScrollTrigger, chapters as labels
+The whole story is a single scrubbed timeline measured in chapter units
+(3 total); chapters are labels. DOM text tweens live in the same timeline so
+text and 3D cannot drift apart. Chosen over per-section triggers/callbacks
+for readability. (M03)
+
+## D017 — GSAP tweens three.js objects directly; camera aimed via lookAt
+Tweens target `camera.position`, a `cameraTarget` `Vector3`, and the watch
+group's `rotation`. `ScrollDirector` calls `camera.lookAt(cameraTarget)`
+each frame. A look-at point is easier to reason about and tune than camera
+rotation angles. No React state involved. (M03)
+
+## D018 — Config / timeline / bridge split
+`animation/storyConfig.ts` (all numbers), `animation/createStoryTimeline.ts`
+(ScrollTrigger + timeline, plain TS), `components/scene/ScrollDirector.tsx`
+(R3F bridge). Keeps the choreography readable and tunable without touching
+components. (M03)
+
+## D019 — gsap.matchMedia for breakpoints and cleanup
+Builds the timeline with desktop or narrow camera states
+(`CAMERA_STATES_NARROW`) and reverts everything (tweens, ScrollTrigger,
+inline styles) on breakpoint change or unmount. Avoids adding
+`@gsap/react`. (M03)
+
+## D020 — Pointer rig unchanged, additive to scroll
+`PointerRig` wraps the watch scroll group, so pointer and scroll rotations
+compose on separate transforms. No conflict observed; influence not
+reduced. (M03)
+
+## D021 — Responsive fit from hero distance (refines D012)
+`Scene` computes fit from the hero camera distance and aspect instead of R3F
+`viewport` (which tracks the live camera distance and would drift during
+scroll). Still scales the model, not the camera. (M03)
+
+## D022 — Fill + back rim to keep dark geometry separated during scroll
+After visual review, the black/gold geometry facing away from the key fell
+to near-black during the Precision orbit. Added inside `StudioLighting`:
+a cool directional fill opposite the key (`[-4, 2, 3]`, 0.4 ≈ 1/3 of key), a
+directional back rim (`[1, 3, -6]`, 0.8), and replaced the small env fill
+panel (`[-5, 0, 3]`, 4×6, 0.6) with a large soft one (`[-5, 2, 4]`, 8×8, 1.1)
+placed where the Precision camera's reflections pick it up, and a large dim
+bounce card below (`[0, -5, 1]`, 12x12, 0.5) for down/lower-left-facing
+surfaces (lower bezel, lugs, band underside). Large areas = soft gradients,
+not second hot spots. Key light and key panel unchanged; no camera/timeline
+changes. (M03)
