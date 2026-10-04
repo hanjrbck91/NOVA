@@ -36,3 +36,32 @@ Planned, to be confirmed in M02/M03. See ARCHITECTURE.md.
 M01 only installs the 3D packages; the placeholder page is plain DOM. A real
 `<Canvas>` is introduced in M02 rather than adding a throwaway scene now.
 (M01)
+
+## D008 — Product asset: Khronos "ChronographWatch" (CC BY 4.0)
+Selected `ChronographWatch.glb` from the Khronos glTF Sample Assets repo,
+copied unmodified (byte-identical, SHA-256 `8e875fcd…1aef`) to
+`public/models/nova-product.glb`.
+
+- Source: https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/ChronographWatch
+- File: https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/ChronographWatch/glTF-Binary/ChronographWatch.glb
+- License: CC BY 4.0 (model and textures) — https://creativecommons.org/licenses/by/4.0/
+- Required attribution: "Chronograph Watch" © 2025 Darmstadt Graphics Group
+  GmbH, adapted by Eric Chadwick, CC BY 4.0. Based on "Chronograph Watch
+  Mudmaster" (https://skfb.ly/oAsPA) by graphiccompressor, CC BY 4.0.
+  (Also embedded in the GLB's `asset.copyright` field.)
+- Logos on the model (Khronos, 3D Commerce, DGG) are trademarks, not covered
+  by CC BY.
+
+Why: a premium wearable device (preference #3; no permissively licensed
+headphones or camera of comparable quality was found quickly). Single
+product, strong silhouette, rich PBR materials (brushed metal, carbon fiber,
+transmissive glass), and four built-in color variants usable later for
+interaction. Reputable source with machine-readable license metadata.
+
+Alternatives considered: SunglassesKhronos (CC BY 4.0, 0.37 MB, simpler
+form), MaterialsVariantsShoe (Shopify, CC BY 4.0, 7.8 MB, scanned-look
+single mesh), AntiqueCamera (CC0, 17.5 MB, antique rather than premium).
+
+Limitations: 7.4 MB (heavy-ish for web, uncompressed textures); visible
+trademark logos; ships an animation clip (`Anim_0`) and 29 materials incl.
+variants. Credit must be shown on the site (M05). (M02)

@@ -3,7 +3,7 @@
 | ID  | Name                         | Status      | Detail                              |
 | --- | ---------------------------- | ----------- | ----------------------------------- |
 | M01 | Foundation                   | Done        | [M01](milestones/M01-foundation.md) |
-| M02 | 3D Scene                     | Not started | —                                   |
+| M02 | 3D Scene                     | Asset ready | [M02](milestones/M02-3d-scene.md)   |
 | M03 | Scroll-driven Animation      | Not started | —                                   |
 | M04 | Interaction & Polish         | Not started | —                                   |
 | M05 | Final Prototype / Deployment | Not started | —                                   |
