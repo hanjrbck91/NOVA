@@ -174,3 +174,34 @@ Timeline unchanged (still 3 chapter units). (M04)
 ## D026 — Pointer rig: smaller and snappier
 `STRENGTH` 0.12 → 0.06 rad, `SMOOTHING` λ 3 → 6. The pointer stays a subtle,
 precise secondary response; scroll owns the major pose. (M04)
+
+## D027 — Loader driven by real scene readiness
+`ready` flips once when `ScrollDirector` (same Suspense boundary as the
+model) has built the timeline — i.e. GLB loaded and mounted. Until then: a
+branded overlay with an indeterminate hairline (no fake percentage), native
+scroll locked via `html.nova-loading`, Lenis not started. No loading
+library; drei's `useProgress` not used because item-count progress for a
+single file is effectively 0 → 100. (M04)
+
+## D028 — CTA is an in-page anchor scrolled by Lenis
+`DISCOVER →` = `<a href="#specs">`; Lenis `anchors: true` handles it, so the
+rest of the story plays during the scroll and reduced motion gets an instant
+jump. The target is a static `Specs` section after the story. (M04)
+
+## D029 — Attribution moved from the stage to the page footer
+Credits in the footer of the specs section (11px, 50% opacity, links), fully
+visible without interaction. Frees the stage on narrow screens. Wording
+unchanged from D008. (M04)
+
+## D030 — Stacked layout below 1280px; desktop hero nudged
+Measured text/watch overlap at 1024 and 768px with the side-by-side
+composition, so the narrow camera states and stacked text now apply below
+1280px (`NARROW_QUERY`, `xl:` in StoryOverlay; supersedes the 768px
+breakpoint from M03). Desktop hero/heroPush target `[0,0,0]` →
+`[-0.3,-0.2,0]` to clear the bottom-left headline at 1440×900; also fixes
+the off-center hero noted in M02/M03. (M04)
+
+## D031 — Two shared type styles, no design system
+`LABEL` and `HEADLINE` in `components/ui/typography.ts`. Headline is fluid
+(`clamp(2.25rem, 5.2vw, 4.75rem)`), medium weight, tight leading, so it
+supports rather than competes with the watch. (M04)

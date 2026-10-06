@@ -13,26 +13,29 @@
 | Animation        | gsap + ScrollTrigger (ships inside `gsap`)  |
 | Smooth scroll    | lenis (wheel only, M04)                     |
 
-## Component tree (as of M03)
+## Component tree (as of M04)
 
 ```
-app/page.tsx                      Server Component
-└── <Story>                       "use client" — tall scroll container (550vh), ScrollTrigger trigger; starts Lenis
-    └── sticky stage (h-svh)      pinned by CSS while the container scrolls
-        ├── <Experience>          WebGL layer (absolute, fills the stage)
-        │   └── <Canvas>          camera + renderer + color management
-        │       ├── <color background>
-        │       └── <Suspense>
-        │           ├── <Scene>          lighting + rig + watch groups, responsive fit
-        │           │   ├── <StudioLighting>
-        │           │   └── <PointerRig> → watch scroll group → fit group → <WatchModel>
-        │           └── <ScrollDirector> builds the scroll timeline, aims the camera
-        └── <StoryOverlay>        DOM chapters (pointer-events-none), attribution
+app/page.tsx                          Server Component
+├── <Story>                           "use client" — ready state, scroll lock, starts Lenis once ready
+│   ├── <Loader>                      full-screen overlay until the scene is ready
+│   └── scroll container (550vh)      ScrollTrigger trigger
+│       └── sticky stage (h-svh)      pinned by CSS while the container scrolls
+│           ├── <Experience>          WebGL layer (absolute, fills the stage)
+│           │   └── <Canvas>          camera + renderer + color management
+│           │       ├── <color background>
+│           │       └── <Suspense>
+│           │           ├── <Scene>          lighting + rig + watch groups, responsive fit
+│           │           │   ├── <StudioLighting>
+│           │           │   └── <PointerRig> → watch scroll group → fit group → <WatchModel>
+│           │           └── <ScrollDirector> builds the timeline, aims the camera, signals ready
+│           └── <StoryOverlay>        DOM chapters (pointer-events-none), DISCOVER → #specs
+└── <Specs id="specs">                static info section + footer with attribution
 ```
 
 | Component / module | Owns | File |
 | --- | --- | --- |
-| `Story` | Scroll length, sticky stage, client boundary | `components/Story.tsx` |
+| `Story` | Scroll length, sticky stage, client boundary, loading/ready state | `components/Story.tsx` |
 | `Experience` | Canvas, camera, renderer settings | `components/scene/Experience.tsx` |
 | `Scene` | What is in the scene, transform layers, fit | `components/scene/Scene.tsx` |
 | `StudioLighting` | Lights and environment reflections | `components/scene/StudioLighting.tsx` |
@@ -42,7 +45,10 @@ app/page.tsx                      Server Component
 | `createStoryTimeline` | ScrollTrigger + the one GSAP timeline | `animation/createStoryTimeline.ts` |
 | `storyConfig` | All chapter ranges, camera/watch states, breakpoints, motion tuning | `animation/storyConfig.ts` |
 | `startSmoothScroll` | Lenis + GSAP ticker / ScrollTrigger sync + cleanup | `animation/smoothScroll.ts` |
-| `StoryOverlay` | Chapter text, scroll indicator | `components/ui/StoryOverlay.tsx` |
+| `StoryOverlay` | Chapter text, scroll indicator, CTA link | `components/ui/StoryOverlay.tsx` |
+| `Loader` | Loading overlay | `components/ui/Loader.tsx` |
+| `Specs` | Information section, footer, attribution | `components/ui/Specs.tsx` |
+| `typography` | `LABEL` / `HEADLINE` class strings | `components/ui/typography.ts` |
 | `Attribution` | Asset credit | `components/ui/Attribution.tsx` |
 
 ## Transform hierarchy (who moves what)
@@ -102,6 +108,14 @@ public/
 └── models/              3D assets (.glb), served statically
 ```
 
+## Loading flow (M04)
+
+1. SSR renders the Loader visible; `html.nova-loading` locks scroll.
+2. The GLB suspends `Scene` + `ScrollDirector` (same Suspense boundary).
+3. When it resolves, `ScrollDirector` builds the timeline and calls
+   `onReady` → `Story` sets `ready` (the only React state in the app).
+4. Scroll unlocks, Lenis starts, the Loader fades out.
+
 ## Scroll data flow (M04)
 
 1. Wheel input is smoothed by Lenis (driven by `gsap.ticker`); touch, keys
@@ -119,3 +133,16 @@ public/
 Exactly one smoothing layer per input. Details:
 [M03](milestones/M03-scroll-driven-animation.md),
 [M04 motion pass](milestones/M04-motion-quality.md).
+
+## Technologies used (final)
+
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · three ·
+@react-three/fiber · @react-three/drei (`useGLTF`, `Environment`,
+`Lightformer`) · GSAP + ScrollTrigger · Lenis.
+
+## Deliberately excluded
+
+Shaders, post-processing, particles, physics, sound, custom cursor,
+additional 3D assets, GLB compression/optimization, state-management
+library, extra animation libraries, CMS, backend, authentication,
+analytics.

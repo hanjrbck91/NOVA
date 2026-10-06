@@ -19,3 +19,29 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
+
+/* Scroll is locked until the 3D scene is ready (see Story.tsx). */
+html.nova-loading {
+  overflow: hidden;
+}
+
+/* Loader: a short highlight travelling along a hairline. */
+@keyframes nova-loader {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
+.nova-loader-bar {
+  animation: nova-loader 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nova-loader-bar {
+    animation: none;
+    left: 33.333%;
+  }
+}

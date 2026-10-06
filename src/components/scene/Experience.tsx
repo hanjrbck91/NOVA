@@ -7,7 +7,12 @@ import { ScrollDirector } from "./ScrollDirector";
 
 // WebGL layer. Fills its (sticky) parent; the DOM overlay sits on top.
 // Color management uses R3F defaults: sRGB output, ACES Filmic tone mapping.
-export function Experience({ story }: { story: RefObject<HTMLElement | null> }) {
+type Props = {
+  story: RefObject<HTMLElement | null>;
+  onReady: () => void; // called once the model is mounted and the timeline built
+};
+
+export function Experience({ story, onReady }: Props) {
   const watchRef = useRef<Group>(null);
 
   return (
@@ -20,7 +25,7 @@ export function Experience({ story }: { story: RefObject<HTMLElement | null> }) 
         <color attach="background" args={["#0a0a0a"]} />
         <Suspense fallback={null}>
           <Scene watchRef={watchRef} />
-          <ScrollDirector trigger={story} watch={watchRef} />
+          <ScrollDirector trigger={story} watch={watchRef} onReady={onReady} />
         </Suspense>
       </Canvas>
     </div>

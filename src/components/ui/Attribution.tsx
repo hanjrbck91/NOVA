@@ -2,7 +2,7 @@
 // docs/DECISIONS.md; keep the two in sync.
 export function Attribution() {
   return (
-    <p className="max-w-sm text-[10px] leading-relaxed text-foreground/40">
+    <p className="max-w-md text-[11px] leading-relaxed text-foreground/50">
       3D model:{" "}
       <a
         className="underline underline-offset-2 hover:text-foreground/70"

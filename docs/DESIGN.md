@@ -59,3 +59,22 @@ text sits bottom-left and the watch stays centered above it.
 
 The earlier 4-section draft (separate "detail" and "rotation" shots) was
 condensed into 3 chapters: Precision covers both.
+
+## Final polish (M04)
+
+- **Loader:** black screen, `NOVA` wordmark (mono, 0.6em tracking), 112px
+  hairline with a travelling highlight, "Preparing chronograph" caption.
+  Fades into the hero; static under reduced motion.
+- **Type:** `HEADLINE` fluid `clamp(2.25rem, 5.2vw, 4.75rem)`, medium
+  weight, leading 0.95, −0.02em; `LABEL` 11px mono, 0.35em, 55% opacity.
+  Every chapter has a label (`NOVA Chronograph`, `02 — Craft`,
+  `03 — NOVA`).
+- **Layout:** side-by-side composition at ≥1280px (hero bottom-left,
+  precision right-middle, final left-middle); stacked bottom-left text with
+  the watch centered above below 1280px. Desktop hero watch sits slightly
+  right of and above center.
+- **CTA:** `DISCOVER →` underlined mono link → information section.
+- **Specs section:** two-column (≥1024px) — label + headline ("Precision
+  engineering." / dimmed "Designed for movement.") + one line of copy; a
+  2-column definition list of six attributes with hairline separators.
+  Footer: "NOVA — concept prototype" + attribution.

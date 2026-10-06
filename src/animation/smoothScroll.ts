@@ -18,6 +18,9 @@ export function startSmoothScroll() {
     syncTouch: false,
     respectReducedMotion: true,
     autoRaf: false,
+    // In-page links (DISCOVER → #specs) scroll through Lenis, so the story
+    // timeline plays through on the way instead of jumping.
+    anchors: true,
   });
 
   lenis.on("scroll", ScrollTrigger.update);

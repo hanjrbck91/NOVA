@@ -8,12 +8,14 @@ import { NARROW_QUERY, WIDE_QUERY } from "@/animation/storyConfig";
 type Props = {
   trigger: RefObject<HTMLElement | null>;
   watch: RefObject<Object3D | null>;
+  onReady: () => void;
 };
 
 // Connects the scroll timeline to the live three.js objects. Renders nothing.
 // Must sit in the same Suspense boundary as the watch so the watch group
-// exists when the timeline is built.
-export function ScrollDirector({ trigger, watch }: Props) {
+// exists when the timeline is built — which also makes it the "scene ready"
+// signal for the loader (onReady).
+export function ScrollDirector({ trigger, watch, onReady }: Props) {
   const camera = useThree((state) => state.camera);
   const cameraTarget = useMemo(() => new Vector3(), []);
 
@@ -34,8 +36,9 @@ export function ScrollDirector({ trigger, watch }: Props) {
         isNarrow: Boolean(context.conditions?.isNarrow),
       });
     });
+    onReady();
     return () => mm.revert();
-  }, [camera, cameraTarget, trigger, watch]);
+  }, [camera, cameraTarget, trigger, watch, onReady]);
 
   // GSAP moves camera.position and cameraTarget; aim the camera every frame.
   useFrame(() => camera.lookAt(cameraTarget));

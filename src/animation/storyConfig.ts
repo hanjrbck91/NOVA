@@ -36,9 +36,12 @@ export const SMOOTH_SCROLL = {
   wheelMultiplier: 0.8,
 };
 
-// Below this width the narrow camera variants are used.
-export const NARROW_QUERY = "(max-width: 767px)";
-export const WIDE_QUERY = "(min-width: 768px)";
+// Below this width the narrow camera variants are used. Must match the `xl:`
+// breakpoint (1280px) that StoryOverlay uses to move text off the bottom —
+// tablets and small laptops get the stacked layout (M04-B: measured text
+// overlap at 768 and 1024px otherwise).
+export const NARROW_QUERY = "(max-width: 1279px)";
+export const WIDE_QUERY = "(min-width: 1280px)";
 
 // ---------------------------------------------------------------------------
 // Camera
@@ -51,10 +54,13 @@ export type CameraState = {
 };
 
 export const CAMERA_STATES = {
-  // A — Hero. Identical to the M02 framing: straight on, 7 units out.
-  hero: { position: [0, 0, 7], target: [0, 0, 0] },
+  // A — Hero. M02 framing (straight on, 7 units out), with the look-at point
+  // nudged left/down (M04-B) so the watch sits slightly right of and above
+  // center: clears the bottom-left headline and compensates for the
+  // bounding-box center sitting behind the case.
+  hero: { position: [0, 0, 7], target: [-0.3, -0.2, 0] },
   // End of chapter 1: a slow dolly-in plus a slight lift, same target.
-  heroPush: { position: [0, 0.2, 5.6], target: [0, 0, 0] },
+  heroPush: { position: [0, 0.2, 5.6], target: [-0.3, -0.2, 0] },
   // B — Precision. Orbits up and to the left, closer than the hero. The
   // target is offset along the camera's screen-right direction (≈ +x +z
   // from this angle) so the watch sits left of center, clear of the
