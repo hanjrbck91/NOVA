@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# NOVA
 
-First, run the development server:
+**The future of time — a cinematic, scroll-driven 3D product experience.**
+
+[**▶ View the live site**](https://hanjrbck91.github.io/NOVA/)
+
+[![Deploy to GitHub Pages](https://github.com/hanjrbck91/NOVA/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/hanjrbck91/NOVA/actions/workflows/deploy-pages.yml)
+
+</div>
+
+---
+
+## About
+
+NOVA is a concept product page for a fictional chronograph, presented like a
+short product film. Scroll and the camera moves around a real-time 3D watch
+through three shots, with short lines of text appearing as the story moves:
+
+1. **The future of time.** The watch is revealed and the camera slowly pushes in.
+2. **Precision in motion.** The camera orbits while the watch turns the other
+   way, showing the case, buttons and strap.
+3. **Experience NOVA.** The camera pulls back to a final composition, and
+   **Discover →** leads to a short specifications section.
+
+Everything you see is rendered live in the browser with WebGL. There are no
+videos or pre-rendered images. Move your mouse and the watch responds subtly.
+
+It was built as a learning project to understand the full workflow behind
+cinematic 3D websites: 3D asset → WebGL scene → camera → lighting →
+scroll-driven animation → typography → interaction → polish.
+
+## Built with
+
+| | |
+| --- | --- |
+| Framework | [Next.js](https://nextjs.org) 16 (App Router, static export), React 19, TypeScript |
+| 3D | [three.js](https://threejs.org), [React Three Fiber](https://r3f.docs.pmnd.rs), [drei](https://drei.docs.pmnd.rs) |
+| Animation | [GSAP](https://gsap.com) + ScrollTrigger: one scroll-scrubbed timeline drives the camera, the watch and the text |
+| Smooth scrolling | [Lenis](https://lenis.darkroom.engineering) (mouse wheel only; touch scrolling stays native) |
+| Styling | [Tailwind CSS](https://tailwindcss.com) v4 |
+| Hosting | GitHub Pages, deployed by GitHub Actions on every push to `main` |
+
+## Run locally
+
+Requires Node.js 20.9 or newer.
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`npm run build` writes a static site to `out/`. To build for a sub-path like
+GitHub Pages, set `NEXT_PUBLIC_BASE_PATH` (for example `/NOVA`). The deploy
+workflow sets it automatically.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project structure
 
-## Learn More
+```
+src/
+├── app/            page, layout, global styles
+├── animation/      scroll story config, GSAP timeline, Lenis setup
+└── components/
+    ├── scene/      3D: canvas, watch model, lighting, camera direction, pointer rig
+    └── ui/         text overlay, loader, specs section, attribution
+public/models/      the 3D model (.glb)
+docs/               architecture, design decisions and milestone notes
+```
 
-To learn more about Next.js, take a look at the following resources:
+The design and engineering decisions behind each step are written up in
+[`docs/`](docs/).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Credits
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3D model: ["Chronograph Watch"](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/ChronographWatch)
+© 2025 Darmstadt Graphics Group GmbH, adapted by Eric Chadwick, licensed
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Based on
+["Chronograph Watch Mudmaster"](https://skfb.ly/oAsPA) by graphiccompressor,
+CC BY 4.0. Khronos and DGG logos are trademarks of their owners.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+NOVA is a fictional concept, not a real product.
