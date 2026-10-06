@@ -205,3 +205,13 @@ the off-center hero noted in M02/M03. (M04)
 `LABEL` and `HEADLINE` in `components/ui/typography.ts`. Headline is fluid
 (`clamp(2.25rem, 5.2vw, 4.75rem)`), medium weight, tight leading, so it
 supports rather than competes with the watch. (M04)
+
+## D032 — GitHub Pages: static export + base path from the workflow
+`next.config.ts` sets `output: "export"` and `basePath` from
+`NEXT_PUBLIC_BASE_PATH` (unset locally → `/`). The Pages workflow
+(`.github/workflows/deploy-pages.yml`) fills it from
+`actions/configure-pages`' `base_path` output, so the prefix always matches
+the repository name. `basePath` covers `_next/` assets, fonts and the favicon;
+the GLB is fetched by URL, so `WatchModel` prefixes it with the same
+variable. Verified by serving `out/` under `/nova-3d/`: every request 200,
+GLB loads, no console errors. (Deploy)

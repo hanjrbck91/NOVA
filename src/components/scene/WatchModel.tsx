@@ -2,7 +2,9 @@ import { useGLTF } from "@react-three/drei";
 import { useMemo } from "react";
 import { Box3, Vector3 } from "three";
 
-const MODEL_URL = "/models/nova-product.glb";
+// basePath isn't applied to plain fetch URLs, so prefix it for sub-path
+// hosting (GitHub Pages). Inlined at build time; "" locally.
+const MODEL_URL = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/models/nova-product.glb`;
 
 // World-space height the watch is normalized to. Camera framing in
 // Experience.tsx is tuned against this value.
